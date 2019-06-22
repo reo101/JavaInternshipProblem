@@ -1,1 +1,7 @@
-Pavel Atanasov, 3, 17, Male
+acd, 20, 45, Female
+acb, 20, 45, Male
+aca, 15, 39, Male
+aba, 10, 30, Male
+aba, 10, 40, Female
+aba, 15, 40, Male
+acd, 20, 45, Female

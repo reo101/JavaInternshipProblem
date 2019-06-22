@@ -1,6 +1,6 @@
 package com.reo.ApplicationsManager;
 
-public class Applicant {
+public class Applicant implements Comparable<Applicant>{
     private String name;
     private int yearsOfExperience;
     private int age;
@@ -15,6 +15,10 @@ public class Applicant {
 
     @Override
     public String toString() {
+        return String.format("[Name: %s,\tYoE: %d,\tAge: %d,\tSex: %s\t]", name, yearsOfExperience, age, sex);
+    }
+
+    public String compactizeData(){
         return String.format("%s, %d, %d, %s", name, yearsOfExperience, age, sex);
     }
 
@@ -49,5 +53,10 @@ public class Applicant {
 
     public void setSex(String sex) {
         this.sex = sex;
+    }
+
+    @Override
+    public int compareTo(Applicant o) {
+        return 0;
     }
 }

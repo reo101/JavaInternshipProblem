@@ -3,8 +3,10 @@ package com.reo.ApplicationsManager;
 import com.reo.ApplicationsManager.Utils.PrintingUtils;
 
 public class Applicant implements Comparable<Applicant> {
-    public static final int MAX_NAME_LENGTH = 24;
-    public static final int MAX_SEX_LENGTH = 8;
+    private static final int MAX_NAME_LENGTH = 24;
+    private static final int MAX_YOE_LENGTH = 4;
+    private static final int MAX_AGE_LENGTH = 4;
+    private static final int MAX_SEX_LENGTH = 8;
     private String name;
     private int yearsOfExperience;
     private int age;
@@ -20,13 +22,17 @@ public class Applicant implements Comparable<Applicant> {
     @Override
     public String toString() {
         int nameTabs = (int) Math.floor((MAX_NAME_LENGTH - name.length()) / 4) + 1;
+        int yoeTabs = (int) Math.floor((MAX_YOE_LENGTH - String.valueOf(yearsOfExperience).length()) / 4) + 1;
+        int ageTabs = (int) Math.floor((MAX_AGE_LENGTH - String.valueOf(age).length()) / 4) + 1;
         int sexTabs = (int) Math.floor((MAX_SEX_LENGTH - sex.length()) / 4) + 1;
 
-        return String.format("[Name: %s%s, YoE: %d\t, Age: %d\t, Sex: %s%s]",
-                name, PrintingUtils.returnLine('\t', nameTabs),
-                yearsOfExperience,
-                age,
+        return String.format("[Name: %s%s, YoE: %d%s\t, Age: %d%s\t, Sex: %s%s]",
+//                name, PrintingUtils.returnLine('\t', nameTabs),
+                name, PrintingUtils.returnLine(' ', MAX_NAME_LENGTH - name.length()),
+                yearsOfExperience, PrintingUtils.returnLine(' ', MAX_YOE_LENGTH - String.valueOf(yearsOfExperience).length()),
+                age, PrintingUtils.returnLine(' ', String.valueOf(age).length()),
                 sex, PrintingUtils.returnLine('\t', sexTabs)
+//                sex, PrintingUtils.returnLine('\t', MAX_SEX_LENGTH - sex.length())
         );
     }
 

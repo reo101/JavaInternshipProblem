@@ -38,8 +38,13 @@ public class Main {
     }
 
     private static void clearScreen() {
-        for (int i = 0; i < 15; i++) {
+        for (int i = 0; i < 20; i++) {
             System.out.println();
+        }
+        try {
+            new ProcessBuilder("cmd", "/c", "cls").inheritIO().start().waitFor();
+        } catch (InterruptedException | IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -124,8 +129,11 @@ public class Main {
             System.out.println("Please enter a nonempty string for the sex: ");
         }
 
-        applicants.add(new Applicant(name, yearsOfExperience, age, sex));
-        System.out.println("Success! New applicant added with data: " + applicants.get(applicants.size() - 1).toString());
+        Applicant newApplicant = new Applicant(name, yearsOfExperience, age, sex);
+
+        applicants.add(newApplicant);
+        clearScreen();
+        System.out.println("Success! New applicant added with data:\n" + newApplicant.toString());
     }
 
 
@@ -135,20 +143,29 @@ public class Main {
         while ((amount = Integer.parseInt(in.nextLine())) <= 0) {
             System.out.println("Please enter a positive integer for the amount of applicants:");
         }
+        int start = applicants.size();
+        int end = start + amount;
 
         for (int i = 0; i < amount; i++) {
             clearScreen();
             System.out.printf("Enter applicant №%d's data:%n", i + 1);
             addSingleApplicant();
         }
+        clearScreen();
+        System.out.println("Success!" + amount + " new applicants were added with data:");
+        printApplicants(start, end);
     }
 
     private static void viewApplicantsMenu() {
-        clearScreen();
         char sel;
+        String line;
         do {
+            clearScreen();
             System.out.println("Select option:\n1: View top 10\n2: Select Sorting method\n3: Return to main menu\n\n");
-            sel = in.nextLine().toCharArray()[0];
+            while ((line = in.nextLine()) == null) {
+                System.out.println("Please enter a nonempty string for the option: ");
+            }
+            sel = line.toCharArray()[0];
             switch (sel) {
                 case '1':
                     viewTopTen();
@@ -168,13 +185,16 @@ public class Main {
         putSpecificApplicantInTop7("Maria", "Female");
         int index = Math.min(10, applicants.size());
         System.out.println("Top " + index + " applicants: ");
-        int maxSize = 85;
-        for (int i = 0;i < index; i++) {
-            System.out.printf("Place %d:\t %s%n", i + 1, applicants.get(i).toString());
-//            if (applicants.get(i).toString().length() > maxSize)
-//                maxSize = applicants.get(i).toString().length();
+        int maxSize = 75 + String.valueOf(index + 1).length();
+        for (int i = 0; i < index; i++) {
+            System.out.printf("№%d:%s%s%n",
+                    i + 1,
+                    PrintingUtils.returnLine(' ', (int) (String.valueOf(index + 1).length() - String.valueOf(i + 1).length() + 1)),
+                    applicants.get(i).toString());
         }
         PrintingUtils.printLine('-', maxSize, true);
+        System.out.println("Enter anything to go back:");
+        in.nextLine();
     }
 
     private static void putSpecificApplicantInTop7(String name, String sex) {
@@ -193,7 +213,7 @@ public class Main {
         clearScreen();
         char sel;
         do {
-            System.out.println("Select option:\n1: Select sorting\n2: Return to main menu\n\n");
+            System.out.println("Select option:\n1: Select sorting\n2: Return to view menu\n\n");
             sel = in.nextLine().toCharArray()[0];
             switch (sel) {
                 case '1':
@@ -215,6 +235,7 @@ public class Main {
                 System.out.println("Please enter a nonempty string for sort methods: ");
             }
             if (sorts.equals("5")) {
+                clearScreen();
                 return;
             }
             sort(sorts.toCharArray(), true);
@@ -235,6 +256,7 @@ public class Main {
                         again = true;
                         break;
                     case '2':
+                        clearScreen();
                         return;
                     default:
                         System.out.println("Please select a valid option! (1 or 2):");
@@ -296,11 +318,19 @@ public class Main {
     }
 
     private static void printApplicants() {
-        int maxSize = 73;
+        int maxSize = 89;
         for (Applicant applicant : applicants) {
             System.out.println(applicant.toString());
 //            if (applicant.toString().length() > maxSize)
 //                maxSize = applicant.toString().length();
+        }
+        PrintingUtils.printLine('_', maxSize, true);
+    }
+
+    private static void printApplicants(int start, int end) {
+        int maxSize = 75 + String.valueOf(end - start).length();
+        for (int i = start; i < end; i++) {
+            System.out.println("№" + (i - start + 1) + ": " + applicants.get(i).toString());
         }
         PrintingUtils.printLine('_', maxSize, true);
     }
@@ -345,7 +375,7 @@ public class Main {
 
         try (Stream<String> stream = Files.lines(Paths.get(absolutePath))) {
             stream.forEach((String line) -> {
-                assert line!=null;
+                assert line != null;
                 String[] data = line.split(", ");
                 applicants.add(new Applicant(data[0],
                         Integer.parseInt(data[1]),

@@ -3,8 +3,8 @@ package com.reo.ApplicationsManager;
 import com.reo.ApplicationsManager.Utils.PrintingUtils;
 
 public class Applicant implements Comparable<Applicant> {
-    private static final int MAX_NAME_LENGTH = 24;
-    private static final int MAX_SEX_LENGTH = 8;
+    public static final int MAX_NAME_LENGTH = 24;
+    public static final int MAX_SEX_LENGTH = 8;
     private String name;
     private int yearsOfExperience;
     private int age;

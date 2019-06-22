@@ -83,9 +83,7 @@ public class Main {
                 System.out.println("Please enter a nonempty string for the option: ");
             }
 
-            assert line != null;
             sel = line.toCharArray()[0];
-//            sel = in.nextLine().toCharArray()[0];
             switch (sel) {
                 case '1':
                     clearScreen();
@@ -120,7 +118,6 @@ public class Main {
             System.out.println("Please enter a positive integer for the age:");
         }
 
-//        in.nextLine();
         System.out.println("Enter the Sex of the Applicant: ");
         String sex;
         while ((sex = in.nextLine()) == null) {
@@ -168,23 +165,23 @@ public class Main {
     private static void viewTopTen() {
         clearScreen();
         sort("2".toCharArray(), false);
-        putTheGirlInTop7("Maria");
+        putSpecificApplicantInTop7("Maria", "Female");
         int index = Math.min(10, applicants.size());
         System.out.println("Top " + index + " applicants: ");
-        int maxSize = 0;
-        for (int i = 0; i < index; i++) {
-            System.out.println(applicants.get(i).toString());
-            if (applicants.get(i).toString().length() > maxSize)
-                maxSize = applicants.get(i).toString().length();
+        int maxSize = 85;
+        for (int i = 0;i < index; i++) {
+            System.out.printf("Place %d:\t %s%n", i + 1, applicants.get(i).toString());
+//            if (applicants.get(i).toString().length() > maxSize)
+//                maxSize = applicants.get(i).toString().length();
         }
         PrintingUtils.printLine('-', maxSize, true);
     }
 
-    private static void putTheGirlInTop7(String name) {
+    private static void putSpecificApplicantInTop7(String name, String sex) {
         Random rand = new Random();
         int place = rand.nextInt(6) + 1;
         for (int i = 0; i < applicants.size(); i++) {
-            if (applicants.get(i).getName().contains(name)) {
+            if (applicants.get(i).getName().contains(name) && applicants.get(i).getSex().equals(sex)) {
                 applicants.get(i).setYearsOfExperience(applicants.get(place - 1).getYearsOfExperience());
                 Collections.swap(applicants, i, place);
                 break;
@@ -214,15 +211,16 @@ public class Main {
         do {
             System.out.println("Select options(type the numbers in the order you wish the applicants to be sorted in):\n1: Sort by Name\n2: Sort by Years of Experience\n3: Sort by Age\n4: Sort by Sex\n5: Go back to main menu\n\n");
             String sorts;
-            while ((sorts = in.nextLine()) == null || sorts == "\n") {
+            while ((sorts = in.nextLine()) == null) {
                 System.out.println("Please enter a nonempty string for sort methods: ");
             }
-            if (sorts == "5") {
+            if (sorts.equals("5")) {
                 return;
             }
             sort(sorts.toCharArray(), true);
 
             char exitSel;
+            boolean again = false;
             String line;
             System.out.println("\nDo you want to go back or sort the applicants again?\nChoose an option:\n1: Sort again\n2: Go back\n\n");
             do {
@@ -234,13 +232,14 @@ public class Main {
 
                 switch (exitSel) {
                     case '1':
+                        again = true;
                         break;
                     case '2':
                         return;
                     default:
                         System.out.println("Please select a valid option! (1 or 2):");
                 }
-            } while (true);
+            } while (! again);
         } while (true);
     }
 
@@ -297,11 +296,11 @@ public class Main {
     }
 
     private static void printApplicants() {
-        int maxSize = 0;
+        int maxSize = 73;
         for (Applicant applicant : applicants) {
             System.out.println(applicant.toString());
-            if (applicant.toString().length() > maxSize)
-                maxSize = applicant.toString().length();
+//            if (applicant.toString().length() > maxSize)
+//                maxSize = applicant.toString().length();
         }
         PrintingUtils.printLine('_', maxSize, true);
     }
@@ -331,9 +330,10 @@ public class Main {
         String directory = "res";
         String absolutePath = directory + File.separator + fileName;
 
-        try (FileWriter fileWriter = new FileWriter(absolutePath, false)) {
-            fileWriter.write("\n" + fileContent);
+        try (FileWriter fileWriter = new FileWriter(absolutePath, true)) {
+            fileWriter.write(fileContent + "\n");
         } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 
@@ -345,6 +345,7 @@ public class Main {
 
         try (Stream<String> stream = Files.lines(Paths.get(absolutePath))) {
             stream.forEach((String line) -> {
+                assert line!=null;
                 String[] data = line.split(", ");
                 applicants.add(new Applicant(data[0],
                         Integer.parseInt(data[1]),

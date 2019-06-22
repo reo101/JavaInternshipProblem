@@ -66,3 +66,4 @@ aba, 10, 30, Male
 aba, 10, 40, Female
 hubav, 1, 18, Male
 Maria Dimitrova, 3, 25, Female
+Pablo Escobar, 30, 56, Apache

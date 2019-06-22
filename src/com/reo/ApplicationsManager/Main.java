@@ -5,6 +5,7 @@ import com.reo.ApplicationsManager.Comparators.NameSorter;
 import com.reo.ApplicationsManager.Comparators.SexSorter;
 import com.reo.ApplicationsManager.Comparators.Sorter;
 import com.reo.ApplicationsManager.Comparators.YearsOfExperienceSorter;
+import com.reo.ApplicationsManager.Utils.PrintingUtils;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -35,7 +36,6 @@ public class Main {
         sorters.put('3', new AgeSorter());
         sorters.put('4', new SexSorter());
     }
-
 
     private static void clearScreen() {
         for (int i = 0; i < 15; i++) {
@@ -82,8 +82,10 @@ public class Main {
             while ((line = in.nextLine()) == null) {
                 System.out.println("Please enter a nonempty string for the option: ");
             }
+
+            assert line != null;
             sel = line.toCharArray()[0];
-            sel = in.nextLine().toCharArray()[0];
+//            sel = in.nextLine().toCharArray()[0];
             switch (sel) {
                 case '1':
                     clearScreen();
@@ -108,13 +110,13 @@ public class Main {
 
         System.out.println("Enter the Years of Experience of " + name + ": ");
         int yearsOfExperience;
-        while ((yearsOfExperience = in.nextInt()) <= 0) {
+        while ((yearsOfExperience = Integer.parseInt(in.nextLine())) <= 0) {
             System.out.println("Please enter a positive integer for the years of experience:");
         }
 
         System.out.println("Enter the Age of " + name + ": ");
         int age;
-        while ((age = in.nextInt()) <= 0) {
+        while ((age = Integer.parseInt(in.nextLine())) <= 0) {
             System.out.println("Please enter a positive integer for the age:");
         }
 
@@ -133,13 +135,13 @@ public class Main {
     private static void addMultipleApplicants() {
         System.out.println("How many Applicants do you want to add?: ");
         int amount;
-        while ((amount = in.nextInt()) <= 0) {
+        while ((amount = Integer.parseInt(in.nextLine())) <= 0) {
             System.out.println("Please enter a positive integer for the amount of applicants:");
         }
 
         for (int i = 0; i < amount; i++) {
             clearScreen();
-            System.out.printf("Enter applicant №%d's data: ", i + 1);
+            System.out.printf("Enter applicant №%d's data:%n", i + 1);
             addSingleApplicant();
         }
     }
@@ -163,20 +165,6 @@ public class Main {
         } while (true);
     }
 
-    private static void printLine(char ch, int amount) {
-        for (int i = 0; i < amount; i++) {
-            System.out.print(ch);
-        }
-    }
-
-    private static void printLine(char ch, int amount, boolean newLine) {
-        for (int i = 0; i < amount; i++) {
-            System.out.print(ch);
-        }
-        if (newLine)
-            System.out.println();
-    }
-
     private static void viewTopTen() {
         clearScreen();
         sort("2".toCharArray(), false);
@@ -189,15 +177,15 @@ public class Main {
             if (applicants.get(i).toString().length() > maxSize)
                 maxSize = applicants.get(i).toString().length();
         }
-        printLine('-', maxSize, true);
+        PrintingUtils.printLine('-', maxSize, true);
     }
 
     private static void putTheGirlInTop7(String name) {
         Random rand = new Random();
         int place = rand.nextInt(6) + 1;
-        for (int i=0; i< applicants.size(); i++) {
-            if(applicants.get(i).getName().contains(name)){
-                applicants.get(i).setYearsOfExperience(applicants.get(place-1).getYearsOfExperience());
+        for (int i = 0; i < applicants.size(); i++) {
+            if (applicants.get(i).getName().contains(name)) {
+                applicants.get(i).setYearsOfExperience(applicants.get(place - 1).getYearsOfExperience());
                 Collections.swap(applicants, i, place);
                 break;
             }
@@ -226,18 +214,24 @@ public class Main {
         do {
             System.out.println("Select options(type the numbers in the order you wish the applicants to be sorted in):\n1: Sort by Name\n2: Sort by Years of Experience\n3: Sort by Age\n4: Sort by Sex\n5: Go back to main menu\n\n");
             String sorts;
-            while ((sorts = in.nextLine()) == null) {
+            while ((sorts = in.nextLine()) == null || sorts == "\n") {
                 System.out.println("Please enter a nonempty string for sort methods: ");
             }
             if (sorts == "5") {
-
+                return;
             }
             sort(sorts.toCharArray(), true);
 
             char exitSel;
+            String line;
             System.out.println("\nDo you want to go back or sort the applicants again?\nChoose an option:\n1: Sort again\n2: Go back\n\n");
             do {
-                exitSel = in.nextLine().toCharArray()[0];
+                while ((line = in.nextLine()) == null) {
+                    System.out.println("Please enter a nonempty string for the option: ");
+                }
+
+                exitSel = line.toCharArray()[0];
+
                 switch (exitSel) {
                     case '1':
                         break;
@@ -309,7 +303,7 @@ public class Main {
             if (applicant.toString().length() > maxSize)
                 maxSize = applicant.toString().length();
         }
-        printLine('_', maxSize, true);
+        PrintingUtils.printLine('_', maxSize, true);
     }
 
     private static boolean exitMenu() {
@@ -329,7 +323,7 @@ public class Main {
 
     private static void saveData() {
         for (Applicant applicant : applicants) {
-            writeDataToFile("applicants.txt", applicant.compactizeData());
+            writeDataToFile("applicants.txt", applicant.makeCompactData());
         }
     }
 
@@ -337,8 +331,8 @@ public class Main {
         String directory = "res";
         String absolutePath = directory + File.separator + fileName;
 
-        try (FileWriter fileWriter = new FileWriter(absolutePath, true)) {
-            fileWriter.write(fileContent);
+        try (FileWriter fileWriter = new FileWriter(absolutePath, false)) {
+            fileWriter.write("\n" + fileContent);
         } catch (IOException e) {
         }
     }

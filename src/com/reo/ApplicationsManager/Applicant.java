@@ -1,6 +1,10 @@
 package com.reo.ApplicationsManager;
 
-public class Applicant implements Comparable<Applicant>{
+import com.reo.ApplicationsManager.Utils.PrintingUtils;
+
+public class Applicant implements Comparable<Applicant> {
+    private static final int MAX_NAME_LENGTH = 24;
+    private static final int MAX_SEX_LENGTH = 8;
     private String name;
     private int yearsOfExperience;
     private int age;
@@ -15,10 +19,18 @@ public class Applicant implements Comparable<Applicant>{
 
     @Override
     public String toString() {
-        return String.format("[Name: %s,\tYoE: %d,\tAge: %d,\tSex: %s\t]", name, yearsOfExperience, age, sex);
+        int nameTabs = (int) Math.floor((MAX_NAME_LENGTH - name.length()) / 4) + 1;
+        int sexTabs = (int) Math.floor((MAX_SEX_LENGTH - sex.length()) / 4) + 1;
+
+        return String.format("[Name: %s%s, YoE: %d\t, Age: %d\t, Sex: %s%s]",
+                name, PrintingUtils.returnLine('\t', nameTabs),
+                yearsOfExperience,
+                age,
+                sex, PrintingUtils.returnLine('\t', sexTabs)
+        );
     }
 
-    public String compactizeData(){
+    public String makeCompactData() {
         return String.format("%s, %d, %d, %s", name, yearsOfExperience, age, sex);
     }
 

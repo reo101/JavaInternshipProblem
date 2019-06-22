@@ -1,17 +1,19 @@
 package com.reo.ApplicationsManager;
 
 import java.io.File;
-import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
+import java.util.stream.Stream;
 
 public class Main {
     private static Scanner in = new Scanner(System.in);
     private static ArrayList<Applicant> applicants = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         printMenu();
     }
 
@@ -30,7 +32,7 @@ public class Main {
         }
     }
 
-    private static void printMenu() {
+    private static void printMenu() throws IOException {
         loadApplicantsFromFile();
         clearScreen();
 //        System.out.println("Select option:\n1: Add applicants\n2: View applicants\n3: Exit\n\n");
@@ -53,8 +55,8 @@ public class Main {
         } while (true);
     }
 
-    private static void loadApplicantsFromFile() {
-
+    private static void loadApplicantsFromFile() throws IOException {
+        readFromFile("applicants.txt");
     }
 
     private static void addApplicantsMenu() {
@@ -105,7 +107,7 @@ public class Main {
         }
 
         applicants.add(new Applicant(name, yearsOfExperience, age, sex));
-        System.out.println("Success! New applicant added with data: " + applicants.get(applicants.size()-1).toString());
+        System.out.println("Success! New applicant added with data: " + applicants.get(applicants.size() - 1).toString());
     }
 
     private static void addMultipleApplicants() {
@@ -139,8 +141,31 @@ public class Main {
         } while (true);
     }
 
+    private static void printLine(char ch, int amount) {
+        for (int i = 0; i < amount; i++) {
+            System.out.print(ch);
+        }
+    }
+
+    private static void printLine(char ch, int amount, boolean newLine) {
+        for (int i = 0; i < amount; i++) {
+            System.out.print(ch);
+        }
+        if (newLine)
+            System.out.println();
+    }
+
     private static void viewTopTen() {
+        clearScreen();
         int index = Math.min(10, applicants.size());
+        System.out.println("Top " + index + " applicants: ");
+        int maxSize = 0;
+        for (int i = 0; i < index; i++) {
+            System.out.println(applicants.get(i).toString());
+            if(applicants.get(i).toString().length() > maxSize)
+                maxSize = applicants.get(i).toString().length();
+        }
+        printLine('-', maxSize, true);
     }
 
     private static void viewSortingMenu() {
@@ -185,21 +210,34 @@ public class Main {
         }
     }
 
-    private static void readFromFile(String fileName) {
-//        String directory = System.getProperty("user.home");
+    private static ArrayList<Applicant> readFromFile(String fileName) throws IOException {
+        ArrayList<Applicant> temp = new ArrayList<>();
+
         String directory = "res";
-//        String fileName = path;
         String absolutePath = directory + File.separator + fileName;
 
-        try (FileReader fileReader = new FileReader(absolutePath)) {
-            int ch = fileReader.read();
-            while (ch != - 1) {
-                System.out.print((char) ch);
-                ch = fileReader.read();
-            }
-        } catch (IOException e) {
-            // exception handling
+//        try (FileReader fileReader = new FileReader(absolutePath)) {
+//            int ch;
+//            do {
+//                ch = fileReader.read();
+//                System.out.print((char) ch);
+//            } while (ch != - 1);
+//        } catch (IOException e) {
+//            // exception handling
+//        }
+
+        try (Stream<String> stream = Files.lines(Paths.get(absolutePath))) {
+            stream.forEach((String line) -> {
+                System.out.println();
+                String[] data = line.split(", ");
+                applicants.add(new Applicant(data[0],
+                        Integer.parseInt(data[1]),
+                        Integer.parseInt(data[2]),
+                        data[3]));
+            });
         }
+
+        return temp;
     }
 }
 /*

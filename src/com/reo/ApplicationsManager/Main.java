@@ -100,11 +100,8 @@ public class Main {
     }
 
     private static void addSingleApplicant() {
-
-//        clearScreen();
         System.out.println("Enter The Full Name of the Applicant: ");
         String name;
-//        in.nextLine();
         while ((name = in.nextLine()) == null) {
             System.out.println("Please enter a nonempty string for the name: ");
         }
@@ -254,9 +251,6 @@ public class Main {
     }
 
     private static void sort(char[] sorts, boolean print) {
-//        for (int i = 0; i < sorts.length; i++) {
-//            sorts[i]--;
-//        }
         clearScreen();
         switch (sorts.length) {
             case 1:
@@ -277,7 +271,6 @@ public class Main {
                         sorters.get(sorts[1]).getName());
                 break;
             case 3:
-//                System.out.println(sorters.size());
                 applicants.sort(sorters
                         .get(sorts[0])
                         .thenComparing(sorters
@@ -327,7 +320,6 @@ public class Main {
             sel = in.nextLine().toCharArray()[0];
             switch (sel) {
                 case '1':
-//                    saveData();
                     return true;
                 case '2':
                     return false;
@@ -348,7 +340,6 @@ public class Main {
         try (FileWriter fileWriter = new FileWriter(absolutePath, true)) {
             fileWriter.write(fileContent);
         } catch (IOException e) {
-//            System.out.println(e.printStackTrace());
         }
     }
 
@@ -360,7 +351,6 @@ public class Main {
 
         try (Stream<String> stream = Files.lines(Paths.get(absolutePath))) {
             stream.forEach((String line) -> {
-//                System.out.println();
                 String[] data = line.split(", ");
                 applicants.add(new Applicant(data[0],
                         Integer.parseInt(data[1]),
@@ -369,18 +359,5 @@ public class Main {
             });
         }
 
-//        return temp;
     }
 }
-/*
-1
-1
-Pavel Atanasov
-3
-17
-Male
-3
-3
-1
-
- */
